@@ -18,7 +18,7 @@
                     <div class="panel-body" style="padding-top: 5px;">
                         <div class="form-group2 col-lg-2">
                             <label>Rut del Trabajador</label>
-                            <asp:TextBox ID="txt_rut_trabajador" CssClass="form-control"
+                            <asp:TextBox ID="txt_rut_trabajador" CssClass="form-control" AutoPostBack="true"
                                 placeholder="Ingrese rut completo"
                                 runat="server"></asp:TextBox>
                             <asp:RegularExpressionValidator ID="RegularExpressionValidator1"

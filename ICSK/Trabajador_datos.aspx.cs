@@ -16,6 +16,10 @@ namespace ICSK
         protected void Page_Load(object sender, EventArgs e)
         {
             textVisibles(false);
+            if (IsPostBack)
+            {
+                btn_buscar_trabajador_Click(sender, e);
+            }
         }
 
         private void textVisibles(bool v)
@@ -73,6 +77,7 @@ namespace ICSK
                         gv_datos.DataBind();
                         FormatoGridview();
                         textVisibles(true);
+                        op.Clear();
                     }
                 }
             }
