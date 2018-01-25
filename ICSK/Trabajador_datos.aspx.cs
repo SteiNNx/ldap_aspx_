@@ -51,22 +51,29 @@ namespace ICSK
                     string p_rut = txt_rut_trabajador.Text;
                     DAO_Hist_Trabajador dao_historial = new DAO_Hist_Trabajador();
                     var op = dao_historial.historicoTrabajadorPorRut(p_rut);
-                    CL_Historico_Trabajador tra = (CL_Historico_Trabajador)op.ToList().First();
-                    CargarAntecedentesUsuario(tra);
-                    gv_datos.DataSource = from datos in op
-                                          select new
-                                          {
-                                              datos.Empresa.Nom_empresa,
-                                              datos.Obra.Nom_obra,
-                                              datos.Fecha_contrato,
-                                              datos.Fecha_finiquito,
-                                              datos.Especialidad.Nom_especialidad,
-                                              datos.Categoria.Nom_categoria,
-                                              datos.Rol
-                                          };
-                    gv_datos.DataBind();
-                    FormatoGridview();
-                    textVisibles(true);
+                    if (op.ToList() == null || op.ToList().Count == 0)
+                    {
+                        lblMensaje.Text = "No Exite, </br> intentelo otra vez";
+                    }
+                    else
+                    {
+                        CL_Historico_Trabajador tra = (CL_Historico_Trabajador)op.ToList().First();
+                        CargarAntecedentesUsuario(tra);
+                        gv_datos.DataSource = from datos in op
+                                              select new
+                                              {
+                                                  datos.Empresa.Nom_empresa,
+                                                  datos.Obra.Nom_obra,
+                                                  datos.Fecha_contrato,
+                                                  datos.Fecha_finiquito,
+                                                  datos.Especialidad.Nom_especialidad,
+                                                  datos.Categoria.Nom_categoria,
+                                                  datos.Rol
+                                              };
+                        gv_datos.DataBind();
+                        FormatoGridview();
+                        textVisibles(true);
+                    }
                 }
             }
             catch (Exception ex)
