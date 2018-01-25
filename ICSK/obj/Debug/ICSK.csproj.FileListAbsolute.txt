@@ -1,0 +1,10 @@
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\ICSK\bin\ICSK.dll.config
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\ICSK\bin\ICSK.dll
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\ICSK\bin\ICSK.pdb
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\ICSK\obj\Debug\ICSK.dll
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\ICSK\obj\Debug\ICSK.pdb
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\ICSK\bin\DataAccess.dll
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\ICSK\bin\Model.dll
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\ICSK\bin\DataAccess.pdb
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\ICSK\bin\Model.pdb
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\ICSK\obj\Debug\ICSK.csprojResolveAssemblyReference.cache

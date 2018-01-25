@@ -1,0 +1,4 @@
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\Model\bin\Debug\Model.dll
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\Model\bin\Debug\Model.pdb
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\Model\obj\Debug\Model.dll
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\Model\obj\Debug\Model.pdb
