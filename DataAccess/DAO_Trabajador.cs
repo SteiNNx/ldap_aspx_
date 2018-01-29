@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 //conexion
 using System.Data.SqlClient;
+using Model;
 
 namespace DataAccess
 {
@@ -53,6 +54,22 @@ namespace DataAccess
                 cone.Close();
             }
             return estado;
+        }
+
+
+        public List<CL_Trabajador> listaDeTrabajadoresFiltradoPorNomApeMat(string p_nom,string p_ape,string p_mat)
+        {
+            List<CL_Trabajador> lista = new List<CL_Trabajador>();
+            try
+            {
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return lista;
         }
     }
 }

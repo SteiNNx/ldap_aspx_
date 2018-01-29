@@ -13,38 +13,26 @@ namespace ICSK
 {
     public partial class Trabajador_datos : System.Web.UI.Page
     {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             textVisibles(false);
+            //filtrarDiv(false);
             if (IsPostBack)
             {
-                btn_buscar_trabajador_Click(sender, e);
+                lblMensajeFiltrar.Text = txt_nombre_completo_popup.Text;
             }
         }
 
-        private void textVisibles(bool v)
-        {
-            if (v)
-            {
-                dv_rut.Visible = true;
-                dv_nom.Visible = true;
-                dv_ape.Visible = true;
-                historico.Visible = true;
-                lblMensaje.Text = "";
-            }
-            else
-            {
-                dv_rut.Visible = false;
-                dv_nom.Visible = false;
-                dv_ape.Visible = false;
-                historico.Visible = false;
-            }
-        }
+
 
         protected void btn_buscar_trabajador_Click(object sender, EventArgs e)
         {
             try
             {
+                txt_rut_trabajador.Text.Replace(".", "");
+                txt_rut_trabajador.Text.Replace("-", "");
                 if (txt_rut_trabajador.Text.Length < 5 || txt_rut_trabajador.Text.Length > 11)
                 {
                     lblMensaje.Text = "Ingrese el rut completo, </br> sin guion y sin puntos";
@@ -106,5 +94,69 @@ namespace ICSK
             gv_datos.HeaderRow.Cells[5].Text = "Categoria";
             gv_datos.HeaderRow.Cells[6].Text = "Rol";
         }
+
+
+        protected void btn_filtrar_Click1(object sender, EventArgs e)
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "Pop", "openModal();", true);
+        }
+
+
+        private void filtrarDiv(bool v)
+        {
+            try
+            {
+
+                if (v)
+                {
+                    filtrarTrabajadores.Visible = true;
+                }
+                else
+                {
+                    filtrarTrabajadores.Visible = false;
+                }
+
+
+            }
+            catch (Exception e)
+            {
+
+                throw new Exception(e.Message);
+            }
+        }
+
+        private void textVisibles(bool v)
+        {
+            if (v)
+            {
+                dv_rut.Visible = true;
+                dv_nom.Visible = true;
+                dv_ape.Visible = true;
+                historico.Visible = true;
+                lblMensaje.Text = "";
+            }
+            else
+            {
+                dv_rut.Visible = false;
+                dv_nom.Visible = false;
+                dv_ape.Visible = false;
+                historico.Visible = false;
+            }
+        }
+
+        protected void btn_fl_pop_Click(object sender, EventArgs e)
+        {
+            //ScriptManager.RegisterStartupScript(this, this.GetType(), "Pop", "closeModal();", true);
+            lblMensajeFiltrar.Text = txt_nombre_completo_popup.Text.ToString();
+            filtrarDiv(true);
+            lblMensajeFiltrar.Text = txt_nombre_completo_popup.Text;
+
+        }
+
+
+
+        //ScriptManager.RegisterStartupScript(this, this.GetType(), "Pop", "closeModal();", true);
+        //    filtrarDiv(true);
+        //lblMensajeFiltrar.Text = txt_nombre_completo_popup.Text;
     }
 }
