@@ -22,6 +22,24 @@ namespace ICSK {
         protected global::System.Web.UI.HtmlControls.HtmlForm form;
         
         /// <summary>
+        /// Control scrp_manager.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.ScriptManager scrp_manager;
+        
+        /// <summary>
+        /// Control UpdatePanel1.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        
+        /// <summary>
         /// Control txt_rut_trabajador.
         /// </summary>
         /// <remarks>
@@ -121,6 +139,33 @@ namespace ICSK {
         protected global::System.Web.UI.WebControls.TextBox txt_ape_antece;
         
         /// <summary>
+        /// Control dv_filtrar_mensaje.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dv_filtrar_mensaje;
+        
+        /// <summary>
+        /// Control lblMensajeFiltrar.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMensajeFiltrar;
+        
+        /// <summary>
+        /// Control Button1.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button Button1;
+        
+        /// <summary>
         /// Control historico.
         /// </summary>
         /// <remarks>
@@ -148,13 +193,13 @@ namespace ICSK {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl filtrarTrabajadores;
         
         /// <summary>
-        /// Control lblMensajeFiltrar.
+        /// Control txt_search.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblMensajeFiltrar;
+        protected global::System.Web.UI.WebControls.TextBox txt_search;
         
         /// <summary>
         /// Control gv_trabajadores_filtrar.
@@ -173,6 +218,24 @@ namespace ICSK {
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txt_nombre_completo_popup;
+        
+        /// <summary>
+        /// Control txt_ape_pa_popup.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txt_ape_pa_popup;
+        
+        /// <summary>
+        /// Control txt_ape_mat_popup.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txt_ape_mat_popup;
         
         /// <summary>
         /// Control btn_fl_pop.

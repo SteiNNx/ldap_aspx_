@@ -110,6 +110,9 @@ namespace DataAccess
             {
                 throw new Exception("error dao hist_tra" + ex.Message);
             }
+            finally{
+                cone.Close();
+            }
             return lista;
         }
 

@@ -5,3 +5,10 @@ C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\Dat
 C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\DataAccess\bin\Debug\Model.pdb
 C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\DataAccess\obj\Debug\DataAccess.dll
 C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal\DataAccess\obj\Debug\DataAccess.pdb
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal - copia\DataAccess\obj\Debug\DataAccess.csprojResolveAssemblyReference.cache
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal - copia\DataAccess\obj\Debug\DataAccess.dll
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal - copia\DataAccess\obj\Debug\DataAccess.pdb
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal - copia\DataAccess\bin\Debug\DataAccess.dll
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal - copia\DataAccess\bin\Debug\DataAccess.pdb
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal - copia\DataAccess\bin\Debug\Model.dll
+C:\Users\r_rojas\Documents\Visual Studio 2015\Projects\SFSF_ModeloDatosFinal - copia\DataAccess\bin\Debug\Model.pdb

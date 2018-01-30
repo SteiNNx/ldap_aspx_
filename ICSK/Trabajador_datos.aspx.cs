@@ -7,7 +7,6 @@ using System.Web.UI.WebControls;
 
 using Model;
 using DataAccess;
-using System.Web.UI.HtmlControls;
 
 namespace ICSK
 {
@@ -19,10 +18,6 @@ namespace ICSK
         {
             textVisibles(false);
             //filtrarDiv(false);
-            if (IsPostBack)
-            {
-                lblMensajeFiltrar.Text = txt_nombre_completo_popup.Text;
-            }
         }
 
 
@@ -146,15 +141,28 @@ namespace ICSK
 
         protected void btn_fl_pop_Click(object sender, EventArgs e)
         {
-            //ScriptManager.RegisterStartupScript(this, this.GetType(), "Pop", "closeModal();", true);
-            lblMensajeFiltrar.Text = txt_nombre_completo_popup.Text.ToString();
+
+            lblMensajeFiltrar.Text = "Busqueda: " + txt_nombre_completo_popup.Text + " " + txt_ape_pa_popup.Text + " " + txt_ape_mat_popup.Text;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "Pop2", "closeModal();", true);
             filtrarDiv(true);
-            lblMensajeFiltrar.Text = txt_nombre_completo_popup.Text;
+            gv_trabajadores_filtrar.DataSource = new DAO_Trabajador()
+                .listaDeTrabajadoresFiltradoPorNomApeMat(txt_nombre_completo_popup.Text.ToString()
+                , txt_ape_pa_popup.Text.ToString(), txt_ape_mat_popup.Text.ToString());
+            gv_trabajadores_filtrar.DataBind();
+
 
         }
+        protected string llenar(string z)
+        {
+            return "ejemplo";
+        }
 
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            lblMensajeFiltrar.Text = "nada";
+        }
 
-
+        
         //ScriptManager.RegisterStartupScript(this, this.GetType(), "Pop", "closeModal();", true);
         //    filtrarDiv(true);
         //lblMensajeFiltrar.Text = txt_nombre_completo_popup.Text;
