@@ -1,0 +1,93 @@
+
+***********************************************************
+
+EXEC sp_addlinkedserver [(localdb)\MyInstance];
+GO
+USE tempdb;
+GO
+CREATE SYNONYM MyEmpresa FOR
+	[10.95.7.201].centralizacion.dbo.TC_EMPRESA;
+GO
+
+drop synonym MyEmpresa;
+
+--DELETE FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].SFSF_Empresa;
+
+**********************INSERT DE EMPRESA************************
+INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa]
+	([RUT_EMPRESA]
+	,[NOM_EMPRESA]
+	,[COD_SOCIEDAD_SAP]
+	) SELECT [RUT_EMPRESA]
+			,[NOM_EMPRESA]
+			,[COD_ACTIVIDAD] 
+			FROM [10.95.7.201].centralizacion.dbo.TC_EMPRESA;
+*****************************TRABAJADOR******************************************
+INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador]
+	(	[RUT]
+	  ,[PATERNO]
+      ,[MATERNO]
+      ,[NOMBRES]
+	) SELECT [RUT]
+      ,ISNULL([PATERNO],'N/A')
+      ,ISNULL([MATERNO],'N/A')
+      ,ISNULL([NOMBRES],'N/A') 
+			FROM [10.95.7.201].centralizacion.dbo.RH_TRABAJADOR ;
+********************************ESPECIALIDAD*************************************************
+INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad]
+	(	[RUT_EMPRESA]
+      ,[COD_ESPECIALIDAD]
+      ,[NOM_ESPECIALIDAD]
+      ,[COD_ESP_SAP]
+	) SELECT 919150009
+      ,[COD_ESPECIALIDAD]
+      ,[NOM_ESPECIALIDAD]
+      ,ISNULL([COD_ESP_SAP],000) 
+			FROM [10.95.7.201].centralizacion.dbo.RH_ESPECIALIDAD;
+***********************************CATEGORIA***********************************************************
+INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria]
+	(	[RUT_EMPRESA]
+      ,[COD_CATEGORIA]
+      ,[NOM_CATEGORIA]
+      ,[ABREV]
+      ,[COD_CAT_SAP]
+	) SELECT  919150009
+      ,[COD_CATEGORIA]
+      ,[NOM_CATEGORIA]
+      ,ISNULL([ABREV],'N/A')
+	  ,ISNULL([COD_CAT_SAP],000) 
+			FROM [10.95.7.201].centralizacion.dbo.RH_CATEGORIA;
+*************************************OBRA******************************************************************
+INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra]
+	(	[RUT_EMPRESA]
+      ,[COD_OBRA]
+      ,[NOM_OBRA]
+	) SELECT  919150009
+      ,[COD_OBRA]
+      ,[NOM_OBRA]
+			FROM [10.95.7.201].centralizacion.dbo.TC_OBRA;
+*****************************************historico*************************************************************
+INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Historico_Trabajador]
+	(	[RUT_EMPRESA]
+      ,[RUT]
+      ,[COD_OBRA]
+      ,[ROL]
+      ,[FECHA_CONTRATO]
+      ,[COD_ESPECIALIDAD]
+      ,[COD_CATEGORIA]
+      ,[FECHA_FINIQUITO]
+	) SELECT  919150009
+      ,[RUT]
+      ,[COD_OBRA]
+	  ,[ROL]
+	  ,[FECHA_CONTRATO]
+	  ,[COD_ESPECIALIDAD]
+	  ,[COD_CATEGORIA]
+	  ,[FECHA_FINIQUITO]
+			FROM [10.95.7.201].centralizacion.dbo.RRHH_HISTORICO_TRABAJADOR;
+
+
+
+
+
+

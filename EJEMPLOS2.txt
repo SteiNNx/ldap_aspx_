@@ -1,0 +1,721 @@
+/****** Script for SelectTopNRows command from SSMS  ******/
+--***************************************************************************
+--****************************SELECT**********************************
+--****************************************************************************
+--***************************EMPRESAS**************************************
+--SELECT TODAS LAS EMPRESAS
+  SELECT DISTINCT(TE.[RUT_EMPRESA])
+	,ISNULL(SS.[NOM_SOCIEDAD],'SK S/N')AS NOMBRE_EMPRESA
+	,ISNULL(SS.COD_SOCIEDAD,'SK00') AS COD_SOCIEDAD_SAP    
+  FROM [centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] AS TE 
+  LEFT JOIN [centralizacion].[dbo].[TC_EMPRESA] AS HT
+  ON(TE.RUT_EMPRESA=HT.RUT_EMPRESA) 
+  LEFT JOIN [centralizacion].[dbo].[SAP_SOCIEDAD] SS
+  ON(TE.RUT_EMPRESA=SS.RUT_SOCIEDAD) 
+  ORDER BY TE.RUT_EMPRESA;
+
+  /*SELECT * FROM [centralizacion].[dbo].[TC_EMPRESA];
+  SELECT * FROM [centralizacion].[dbo].[SAP_SOCIEDAD];
+  SELECT * FROM [centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR];*/
+  --**************************ESPECIALIDAD*********************************
+  SELECT DISTINCT(TE.[RUT_EMPRESA])
+  ,ISNULL(RE.COD_ESPECIALIDAD,1001) AS COD_ESPECIALIDAD
+  ,ISNULL(RE.NOM_ESPECIALIDAD,'ESPEC S/N') AS NOMBRE_ESPECIALIDAD
+  ,ISNULL(RE.COD_ESP_SAP,'N/A') AS COD_ESP_SAP
+  FROM [centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] TE
+  left JOIN [centralizacion].[dbo].[RH_ESPECIALIDAD] RE 
+  ON (TE.COD_ESPECIALIDAD=RE.COD_ESPECIALIDAD)
+  ORDER BY ISNULL(RE.COD_ESPECIALIDAD,1001) ASC;
+
+  /*SELECT RE.COD_ESPECIALIDAD,RE.NOM_ESPECIALIDAD
+  FROM [centralizacion].[dbo].[RH_ESPECIALIDAD] RE ORDER BY RE.COD_ESPECIALIDAD;
+  SELECT (TE.COD_ESPECIALIDAD) FROM [centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] TE order by te.cod_especialidad;*/
+
+  --*****************************OBRAS**************************************
+  --SELECT OBRAS
+  SELECT DISTINCT(RH.COD_OBRA)
+	,ISNULL(TC.NOM_OBRA
+	,CONCAT(RH.COD_OBRA,'-ICSK OBRA')) AS OBRA 
+  FROM [centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH
+  LEFT JOIN [centralizacion].[dbo].[TC_OBRA] TC 
+  ON(RH.COD_OBRA=TC.COD_OBRA) 
+  ORDER BY RH.COD_OBRA;
+
+  --SELECT DISTINCT(RH.COD_OBRA) FROM [centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH;
+  --**********************CATEGORIA******************************************
+  --SELECT CATEGORIA
+  SELECT DISTINCT(RC.COD_CATEGORIA)
+	,ISNULL(RC.NOM_CATEGORIA,'--') AS NOM_CATEGORIA
+	,ISNULL(RC.ABREV,SUBSTRING(RC.NOM_CATEGORIA,1,4)) AS ABREV_CATEGORIA 
+	,RH.RUT_EMPRESA as RUT_EMPRESA
+  FROM [centralizacion].[dbo].[RH_CATEGORIA] RC 
+  LEFT JOIN [centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH 
+  ON(RC.COD_CATEGORIA=RH.COD_CATEGORIA) 
+  WHERE RH.RUT_EMPRESA IS NOT NULL
+  ORDER BY RC.COD_CATEGORIA;
+
+  --SELECT DISTINCT(RH.COD_CATEGORIA) FROM [centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH ;
+  --SELECT RH.COD_CATEGORIA FROM [centralizacion].[dbo].[RH_CATEGORIA] RH ;
+ --*************************EMPLEADOS*****************************************
+  SELECT DISTINCT(RT.RUT),RT.PATERNO,RT.MATERNO,RT.NOMBRES FROM [centralizacion].[dbo].[RH_TRABAJADOR] RT 
+  LEFT JOIN [centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH
+  ON(RT.RUT=RH.RUT);
+  
+  /*SELECT * FROM [centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH ORDER BY RH.RUT ;
+  SELECT * FROM [centralizacion].[dbo].[RH_TRABAJADOR] RT;*/
+
+--******************************historico_trabajadores********************************
+SELECT EM.RUT_EMPRESA,TR.RUT,OB.COD_OBRA,HT.ROL,HT.FECHA_CONTRATO,ES.COD_ESPECIALIDAD
+   ,CA.COD_CATEGORIA,HT.FECHA_FINIQUITO
+   FROM [10.95.7.201].[centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] HT
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa] EM
+   ON(HT.RUT_EMPRESA=EM.RUT_EMPRESA)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra] OB
+   ON(HT.RUT_EMPRESA=OB.RUT_EMPRESA AND HT.COD_OBRA=OB.COD_OBRA)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria] CA
+   ON(HT.RUT_EMPRESA=CA.RUT_EMPRESA AND HT.COD_CATEGORIA=CA.COD_CATEGORIA)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad] ES
+   ON(HT.RUT_EMPRESA=ES.RUT_EMPRESA AND HT.COD_ESPECIALIDAD=ES.COD_ESPECIALIDAD)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador] TR
+   ON(HT.RUT=TR.RUT)
+   ;
+
+--***************************************************************************
+--****************************MIGRACION**********************************
+--****************************************************************************
+--***************************EMPRESAS*************************************
+
+INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa]
+	([RUT_EMPRESA]
+	,[NOM_EMPRESA]
+	,[COD_SOCIEDAD_SAP]
+	) SELECT DISTINCT(TE.[RUT_EMPRESA])
+	,ISNULL(SS.[NOM_SOCIEDAD],'SK S/N')AS NOMBRE_EMPRESA
+	,ISNULL(SS.COD_SOCIEDAD,'SK00') AS COD_SOCIEDAD_SAP    
+  FROM [10.95.7.201].[centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] AS TE 
+  LEFT JOIN [10.95.7.201].[centralizacion].[dbo].[TC_EMPRESA] AS HT
+  ON(TE.RUT_EMPRESA=HT.RUT_EMPRESA) 
+  LEFT JOIN [10.95.7.201].[centralizacion].[dbo].[SAP_SOCIEDAD] SS
+  ON(TE.RUT_EMPRESA=SS.RUT_SOCIEDAD) 
+  ORDER BY TE.RUT_EMPRESA;
+--*******************************************************************************
+--***************************ESPECIALIDAD****************************************
+INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad]
+	(	[RUT_EMPRESA]
+      ,[COD_ESPECIALIDAD]
+      ,[NOM_ESPECIALIDAD]
+      ,[COD_ESP_SAP]
+	) SELECT DISTINCT(TE.[RUT_EMPRESA])
+  ,ISNULL(RE.COD_ESPECIALIDAD,1001) AS COD_ESPECIALIDAD
+  ,ISNULL(RE.NOM_ESPECIALIDAD,'ESPEC S/N') AS NOMBRE_ESPECIALIDAD
+  ,ISNULL(RE.COD_ESP_SAP,'N/A') AS COD_ESP_SAP
+  FROM [10.95.7.201].[centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] TE
+  left JOIN [10.95.7.201].[centralizacion].[dbo].[RH_ESPECIALIDAD] RE 
+  ON (TE.COD_ESPECIALIDAD=RE.COD_ESPECIALIDAD)
+  WHERE RE.COD_ESPECIALIDAD IS NOT NULL
+  ORDER BY ISNULL(RE.COD_ESPECIALIDAD,1001) ASC;
+--******************************************************************************
+--***************************OBRAA*************************************
+ INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra]
+	(	
+      [COD_OBRA]
+      ,[NOM_OBRA]
+	  ,[RUT_EMPRESA]
+	) SELECT DISTINCT(RH.COD_OBRA)
+	,ISNULL(TC.NOM_OBRA
+	,CONCAT(RH.COD_OBRA,'-ICSK OBRA')) AS OBRA
+	,RH.RUT_EMPRESA
+  FROM [10.95.7.201].[centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH
+  LEFT JOIN [10.95.7.201].[centralizacion].[dbo].[TC_OBRA] TC 
+  ON(RH.COD_OBRA=TC.COD_OBRA) 
+  ORDER BY RH.COD_OBRA;
+--*****************************************************************************
+--***************************CATEGORIA******************************************
+INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria]
+	(	
+      [COD_CATEGORIA]
+      ,[NOM_CATEGORIA]
+      ,[ABREV]
+      ,[COD_CAT_SAP]
+	  ,[RUT_EMPRESA]
+	) SELECT DISTINCT(RC.COD_CATEGORIA)
+	,ISNULL(RC.NOM_CATEGORIA,'--') AS NOM_CATEGORIA
+	,ISNULL(RC.ABREV,SUBSTRING(RC.NOM_CATEGORIA,1,4)) AS ABREV_CATEGORIA 
+	,ISNULL(RC.COD_CAT_SAP,100) AS COD_CAT_SAP
+	,RH.RUT_EMPRESA as RUT_EMPRESA
+  FROM [10.95.7.201].[centralizacion].[dbo].[RH_CATEGORIA] RC 
+  LEFT JOIN [10.95.7.201].[centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH 
+  ON(RC.COD_CATEGORIA=RH.COD_CATEGORIA) 
+  WHERE RH.RUT_EMPRESA IS NOT NULL
+  ORDER BY RC.COD_CATEGORIA;
+--******************************************************************************
+--**************************TRABAJADOR******************************************
+ INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador]
+	(	[RUT]
+	  ,[PATERNO]
+      ,[MATERNO]
+      ,[NOMBRES]
+	) SELECT 
+	DISTINCT(RT.RUT)
+	,ISNULL(RT.PATERNO,'N/A')
+	,ISNULL(RT.MATERNO,'N/A')
+	,ISNULL(RT.NOMBRES,'N/A')
+   FROM [10.95.7.201].[centralizacion].[dbo].[RH_TRABAJADOR] RT 
+   ORDER BY RT.RUT ASC;
+--******************************************************************************
+--**************************HISTORICO_TRABAJADOR*************************************
+   INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Historico_Trabajador]
+	(	[RUT_EMPRESA]
+      ,[RUT]
+      ,[COD_OBRA]
+      ,[ROL]
+      ,[FECHA_CONTRATO]
+      ,[COD_ESPECIALIDAD]
+      ,[COD_CATEGORIA]
+      ,[FECHA_FINIQUITO]
+	)SELECT EM.RUT_EMPRESA,TR.RUT,OB.COD_OBRA,HT.ROL,HT.FECHA_CONTRATO,ES.COD_ESPECIALIDAD
+   ,CA.COD_CATEGORIA,HT.FECHA_FINIQUITO
+   FROM [10.95.7.201].[centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] HT
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa] EM
+   ON(HT.RUT_EMPRESA=EM.RUT_EMPRESA)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra] OB
+   ON(HT.RUT_EMPRESA=OB.RUT_EMPRESA AND HT.COD_OBRA=OB.COD_OBRA)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria] CA
+   ON(HT.RUT_EMPRESA=CA.RUT_EMPRESA AND HT.COD_CATEGORIA=CA.COD_CATEGORIA)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad] ES
+   ON(HT.RUT_EMPRESA=ES.RUT_EMPRESA AND HT.COD_ESPECIALIDAD=ES.COD_ESPECIALIDAD)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador] TR
+   ON(HT.RUT=TR.RUT) WHERE HT.FECHA_FINIQUITO IS NOT NULL;
+
+--********************************************************************************
+--*********************************sp_procedures**********************************
+--********************************************************************************
+  use BD_SFSF;
+  go
+--********************************empresas******************************************
+CREATE PROCEDURE dbo.SFSF_SP_INSERT_EMPRESAS
+   AS
+   BEGIN
+      INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa]
+	([RUT_EMPRESA]
+	,[NOM_EMPRESA]
+	,[COD_SOCIEDAD_SAP]
+	) 
+  SELECT DISTINCT(TE.[RUT_EMPRESA])
+	,ISNULL(HT.NOM_EMPRESA,'SK S/N')AS NOMBRE_EMPRESA
+	,ISNULL(HT.COD_SOCIEDAD_SAP,'SK00') AS COD_SOCIEDAD_SAP    
+  FROM [10.95.7.201].[centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] AS TE 
+  INNER JOIN [10.95.7.201].[centralizacion].[dbo].[TC_EMPRESA] AS HT
+  ON(TE.RUT_EMPRESA=HT.RUT_EMPRESA) 
+  WHERE NOT EXISTS(SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa] OB
+  WHERE OB.RUT_EMPRESA=HT.RUT_EMPRESA );
+  END;
+--*********************************OBRAS*******************************************
+ CREATE PROCEDURE dbo.SFSF_SP_INSERT_OBRAS
+   AS
+   BEGIN
+     INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra]
+	(	
+      [COD_OBRA]
+      ,[NOM_OBRA]
+	  ,[RUT_EMPRESA]
+	) SELECT DISTINCT(RH.COD_OBRA)
+	,ISNULL(TC.NOM_OBRA
+	,CONCAT(RH.COD_OBRA,'-ICSK OBRA')) AS OBRA
+	,RH.RUT_EMPRESA
+  FROM [10.95.7.201].[centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH
+  inner JOIN [10.95.7.201].[centralizacion].[dbo].[TC_OBRA] TC 
+  ON(RH.COD_OBRA=TC.COD_OBRA)
+  inner JOIN [10.95.7.201].[centralizacion].[dbo].[TC_EMPRESA]  TE
+  ON(TE.RUT_EMPRESA=RH.RUT_EMPRESA) 
+  WHERE NOT EXISTS (SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra] OB
+  WHERE OB.RUT_EMPRESA=RH.RUT_EMPRESA AND OB.COD_OBRA=RH.COD_OBRA ) 
+  ORDER BY RH.COD_OBRA;
+   END;
+--********************************ESPECIALIDAD************************************
+     CREATE PROCEDURE dbo.SFSF_SP_INSERT_ESPECIALIDAD
+   AS
+   BEGIN
+   INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad]
+	(	[RUT_EMPRESA]
+      ,[COD_ESPECIALIDAD]
+      ,[NOM_ESPECIALIDAD]
+      ,[COD_ESP_SAP]
+	) SELECT DISTINCT(TE.[RUT_EMPRESA])
+  ,ISNULL(RE.COD_ESPECIALIDAD,1001) AS COD_ESPECIALIDAD
+  ,ISNULL(RE.NOM_ESPECIALIDAD,'ESPEC S/N') AS NOMBRE_ESPECIALIDAD
+  ,ISNULL(RE.COD_ESP_SAP,'N/A') AS COD_ESP_SAP
+  FROM [10.95.7.201].[centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] TE
+  inner JOIN [10.95.7.201].[centralizacion].[dbo].[RH_ESPECIALIDAD] RE 
+  ON (TE.COD_ESPECIALIDAD=RE.COD_ESPECIALIDAD)
+  inner JOIN [10.95.7.201].[centralizacion].[dbo].[TC_EMPRESA]  TC
+  ON(TC.RUT_EMPRESA=TE.RUT_EMPRESA) 
+  WHERE RE.COD_ESPECIALIDAD IS NOT NULL AND NOT EXISTS
+  (SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad] ES
+  WHERE ES.RUT_EMPRESA=TE.RUT_EMPRESA AND ES.COD_ESPECIALIDAD=TE.COD_ESPECIALIDAD )
+  ORDER BY ISNULL(RE.COD_ESPECIALIDAD,1001) ASC;
+   END;
+
+--******************************categoria***************************************
+
+CREATE PROCEDURE dbo.SFSF_SP_INSERT_CATEGORIA
+   AS
+   BEGIN
+     INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria]
+	(	
+      [COD_CATEGORIA]
+      ,[NOM_CATEGORIA]
+      ,[ABREV]
+      ,[COD_CAT_SAP]
+	  ,[RUT_EMPRESA]
+	) SELECT DISTINCT(RC.COD_CATEGORIA)
+	,ISNULL(RC.NOM_CATEGORIA,'--') AS NOM_CATEGORIA
+	,ISNULL(RC.ABREV,SUBSTRING(RC.NOM_CATEGORIA,1,4)) AS ABREV_CATEGORIA 
+	,ISNULL(RC.COD_CAT_SAP,100) AS COD_CAT_SAP
+	,RH.RUT_EMPRESA as RUT_EMPRESA
+  FROM [10.95.7.201].[centralizacion].[dbo].[RH_CATEGORIA] RC 
+  LEFT JOIN [10.95.7.201].[centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH 
+  ON(RC.COD_CATEGORIA=RH.COD_CATEGORIA) 
+  inner JOIN [10.95.7.201].[centralizacion].[dbo].[TC_EMPRESA]  TC
+  ON(TC.RUT_EMPRESA=RH.RUT_EMPRESA) 
+  WHERE RH.RUT_EMPRESA IS NOT NULL AND 
+  NOT EXISTS(SELECT CA.COD_CATEGORIA,CA.NOM_CATEGORIA,CA.ABREV
+  ,CA.COD_CAT_SAP,CA.RUT_EMPRESA
+    FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria] CA
+	WHERE CA.RUT_EMPRESA=RH.RUT_EMPRESA AND CA.COD_CATEGORIA=RH.COD_CATEGORIA)
+  ORDER BY RC.COD_CATEGORIA;
+   END;
+
+--****************************TRABAJADOR*****************************************
+   CREATE PROCEDURE dbo.SFSF_SP_INSERT_TRABAJADOR
+   AS
+   BEGIN
+  INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador]
+	(	[RUT]
+	  ,[PATERNO]
+      ,[MATERNO]
+      ,[NOMBRES]
+	) SELECT 
+	DISTINCT(RT.RUT)
+	,ISNULL(RT.PATERNO,'N/A')
+	,ISNULL(RT.MATERNO,'N/A')
+	,ISNULL(RT.NOMBRES,'N/A')
+   FROM [10.95.7.201].[centralizacion].[dbo].[RH_TRABAJADOR] RT 
+   WHERE NOT EXISTS (SELECT RM.RUT,RM.PATERNO,RM.MATERNO,RT.NOMBRES 
+   FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador] RM WHERE RM.RUT=RT.RUT) 
+   ORDER BY RT.RUT ASC;
+   END;
+--***********************HIST TRABAJADORES**************************************
+CREATE PROCEDURE dbo.SFSF_SP_INSERT_HIST_TRABAJA
+   AS
+   BEGIN
+   INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Historico_Trabajador]
+	(	[RUT_EMPRESA]
+      ,[RUT]
+      ,[COD_OBRA]
+      ,[ROL]
+      ,[FECHA_CONTRATO]
+      ,[COD_ESPECIALIDAD]
+      ,[COD_CATEGORIA]
+      ,[FECHA_FINIQUITO]
+	)SELECT EM.RUT_EMPRESA,TR.RUT,OB.COD_OBRA,HT.ROL,HT.FECHA_CONTRATO,ES.COD_ESPECIALIDAD
+   ,CA.COD_CATEGORIA,HT.FECHA_FINIQUITO
+   FROM [10.95.7.201].[centralizacion].[dbo].[RRHH_HISTORICO_TRABAJADOR] HT
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa] EM
+   ON(HT.RUT_EMPRESA=EM.RUT_EMPRESA)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra] OB
+   ON(HT.RUT_EMPRESA=OB.RUT_EMPRESA AND HT.COD_OBRA=OB.COD_OBRA)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria] CA
+   ON(HT.RUT_EMPRESA=CA.RUT_EMPRESA AND HT.COD_CATEGORIA=CA.COD_CATEGORIA)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad] ES
+   ON(HT.RUT_EMPRESA=ES.RUT_EMPRESA AND HT.COD_ESPECIALIDAD=ES.COD_ESPECIALIDAD)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador] TR
+   ON(HT.RUT=TR.RUT)
+    WHERE HT.FECHA_FINIQUITO IS NOT NULL
+   AND NOT EXISTS(SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Historico_Trabajador] HH
+   WHERE HH.RUT_EMPRESA=HT.RUT_EMPRESA AND HH.RUT=HT.RUT AND HH.ROL=HT.ROL
+   AND HH.FECHA_CONTRATO=HT.FECHA_CONTRATO AND HH.COD_OBRA=HT.COD_OBRA 
+   AND HH.COD_ESPECIALIDAD=HT.COD_ESPECIALIDAD AND HH.COD_CATEGORIA=HT.COD_CATEGORIA);
+   END;
+
+--*********************************************************************************************************
+--*********************************************************************************************************
+--*******************************************FINAL*********************************************************
+--*********************************************************************************************************
+--*********************************************************************************************************
+
+--*****************************************EMPRESAS********************************************************
+
+  CREATE PROCEDURE dbo.SFSF_SP_INSERT_EMPRESAS @bd nvarchar(200)
+   AS
+   DECLARE @sqlCommand nvarchar(4000)
+   BEGIN
+   IF @bd='Dessau'
+   begin
+   set @sqlCommand = 'INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa]
+	([RUT_EMPRESA]
+	,[NOM_EMPRESA]
+	,[COD_SOCIEDAD_SAP]
+	) 
+  SELECT '''+'773301204'+''',
+	HT.NOM_EMPRESA
+	,HT.COD_SOCIEDAD_SAP  
+  FROM [10.95.7.201].['+@bd+'].[dbo].[TC_EMPRESA] AS HT
+  WHERE NOT EXISTS(SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa] OB
+  WHERE OB.RUT_EMPRESA='''+'773301204'+''' )';
+   end
+   else
+   begin
+    set @sqlCommand = 'INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa]
+	([RUT_EMPRESA]
+	,[NOM_EMPRESA]
+	,[COD_SOCIEDAD_SAP]
+	) 
+  SELECT DISTINCT(TE.[RUT_EMPRESA])
+	,HT.NOM_EMPRESA
+	,HT.COD_SOCIEDAD_SAP  
+  FROM [10.95.7.201].['+@bd+'].[dbo].[RRHH_HISTORICO_TRABAJADOR] AS TE 
+  INNER JOIN [10.95.7.201].['+@bd+'].[dbo].[TC_EMPRESA] AS HT
+  ON(TE.RUT_EMPRESA=HT.RUT_EMPRESA) 
+  WHERE NOT EXISTS(SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa] OB
+  WHERE OB.RUT_EMPRESA=HT.RUT_EMPRESA )';
+   end
+  EXECUTE sp_executesql @sqlCommand;
+  END;
+
+--****************************************obras*************************************************************
+ CREATE PROCEDURE dbo.SFSF_SP_INSERT_OBRAS @bd nvarchar(200)
+   AS
+   DECLARE @sqlCommand nvarchar(4000)
+   BEGIN
+   IF @bd='Dessau'
+   BEGIN
+   set @sqlCommand = 'INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra]
+	(	
+      [COD_OBRA]
+      ,[NOM_OBRA]
+	  ,[RUT_EMPRESA]
+	) SELECT DISTINCT(RH.COD_OBRA)
+	,ISNULL(TC.NOM_OBRA
+	,CONCAT(RH.COD_OBRA,'''+'-ICSK_OBRA'+''')) 
+	,773301204
+  FROM [10.95.7.201].['+@bd+'].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH
+  inner JOIN [10.95.7.201].['+@bd+'].[dbo].[TC_OBRA] TC 
+  ON(RH.COD_OBRA=TC.COD_OBRA)
+  inner JOIN [10.95.7.201].['+@bd+'].[dbo].[TC_EMPRESA]  TE
+  ON(TE.RUT_EMPRESA=RH.RUT_EMPRESA) 
+  WHERE NOT EXISTS (SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra] OB
+  WHERE OB.RUT_EMPRESA=RH.RUT_EMPRESA AND OB.COD_OBRA=RH.COD_OBRA ) 
+  ORDER BY RH.COD_OBRA';
+   END
+   ELSE
+   BEGIN
+		set @sqlCommand = 'INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra]
+	(	
+      [COD_OBRA]
+      ,[NOM_OBRA]
+	  ,[RUT_EMPRESA]
+	) SELECT DISTINCT(RH.COD_OBRA)
+	,ISNULL(TC.NOM_OBRA
+	,CONCAT(RH.COD_OBRA,'''+'-ICSK_OBRA'+''')) 
+	,RH.RUT_EMPRESA
+  FROM [10.95.7.201].['+@bd+'].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH
+  inner JOIN [10.95.7.201].['+@bd+'].[dbo].[TC_OBRA] TC 
+  ON(RH.COD_OBRA=TC.COD_OBRA)
+  inner JOIN [10.95.7.201].['+@bd+'].[dbo].[TC_EMPRESA]  TE
+  ON(TE.RUT_EMPRESA=RH.RUT_EMPRESA) 
+  WHERE NOT EXISTS (SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra] OB
+  WHERE OB.RUT_EMPRESA=RH.RUT_EMPRESA AND OB.COD_OBRA=RH.COD_OBRA ) 
+  ORDER BY RH.COD_OBRA';
+   END
+    
+  EXECUTE sp_executesql @sqlCommand;
+   END;
+--***************************************especialidad*******************************************************
+   CREATE PROCEDURE dbo.SFSF_SP_INSERT_ESPECIALIDAD @bd nvarchar(200)
+   AS
+   DECLARE @sqlCommand nvarchar(4000)
+   BEGIN
+   IF @bd='Dessau'
+   BEGIN
+			 set @sqlCommand = ' INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad]
+			(	[RUT_EMPRESA]
+			  ,[COD_ESPECIALIDAD]
+			  ,[NOM_ESPECIALIDAD]
+			  ,[COD_ESP_SAP]
+				) SELECT DISTINCT(TE.[RUT_EMPRESA])
+			 ,RE.COD_ESPECIALIDAD
+			 ,ISNULL(RE.NOM_ESPECIALIDAD,'''+'ESPEC S/N'+''') AS NOMBRE_ESPECIALIDAD
+			,ISNULL(RE.COD_ESP_SAP,'''+'N/A'+''') AS COD_ESP_SAP
+			 FROM [10.95.7.201].['+@bd+'].[dbo].[RRHH_HISTORICO_TRABAJADOR] TE
+			 inner JOIN [10.95.7.201].['+@bd+'].[dbo].[RH_ESPECIALIDAD] RE 
+			 ON (TE.COD_ESPECIALIDAD=RE.COD_ESPECIALIDAD)
+			 inner JOIN [10.95.7.201].['+@bd+'].[dbo].[TC_EMPRESA]  TC
+			 ON(TC.RUT_EMPRESA=TE.RUT_EMPRESA) 
+			 WHERE RE.COD_ESPECIALIDAD IS NOT NULL AND NOT EXISTS
+			 (SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad] ES
+			 WHERE ES.RUT_EMPRESA=TE.RUT_EMPRESA AND ES.COD_ESPECIALIDAD=TE.COD_ESPECIALIDAD )
+			 ORDER BY RE.COD_ESPECIALIDAD ASC';
+   END
+   ELSE
+   BEGIN
+   			   set @sqlCommand = ' INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad]
+				(	[RUT_EMPRESA]
+				  ,[COD_ESPECIALIDAD]
+				  ,[NOM_ESPECIALIDAD]
+				  ,[COD_ESP_SAP]
+				) SELECT DISTINCT(TE.[RUT_EMPRESA])
+			  ,RE.COD_ESPECIALIDAD
+			  ,ISNULL(RE.NOM_ESPECIALIDAD,'''+'ESPEC S/N'+''') AS NOMBRE_ESPECIALIDAD
+			  ,ISNULL(RE.COD_ESP_SAP,'''+'N/A'+''') AS COD_ESP_SAP
+			  FROM [10.95.7.201].['+@bd+'].[dbo].[RRHH_HISTORICO_TRABAJADOR] TE
+			  inner JOIN [10.95.7.201].['+@bd+'].[dbo].[RH_ESPECIALIDAD] RE 
+			  ON (TE.COD_ESPECIALIDAD=RE.COD_ESPECIALIDAD)
+			  inner JOIN [10.95.7.201].['+@bd+'].[dbo].[TC_EMPRESA]  TC
+			  ON(TC.RUT_EMPRESA=TE.RUT_EMPRESA) 
+			  WHERE RE.COD_ESPECIALIDAD IS NOT NULL AND NOT EXISTS
+			  (SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad] ES
+			  WHERE ES.RUT_EMPRESA=TE.RUT_EMPRESA AND ES.COD_ESPECIALIDAD=TE.COD_ESPECIALIDAD )
+			  ORDER BY RE.COD_ESPECIALIDAD ASC';
+   END
+  EXECUTE sp_executesql @sqlCommand;
+   END;
+
+--****************************************categoria***********************************************
+
+  CREATE PROCEDURE dbo.SFSF_SP_INSERT_CATEGORIA @bd nvarchar(200)
+   AS
+   DECLARE @sqlCommand nvarchar(4000)
+   BEGIN
+   
+    IF COL_LENGTH('['+@bd+'].[dbo].[RH_CATEGORIA]', '[COD_CAT_SAP]') IS NOT NULL
+	BEGIN
+		if @bd='Dessau'
+		begin
+		set @sqlCommand = ' INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria]
+			(	
+			[COD_CATEGORIA]
+			,[NOM_CATEGORIA]
+			,[ABREV]
+			,[COD_CAT_SAP]
+			,[RUT_EMPRESA]
+			) SELECT DISTINCT(RC.COD_CATEGORIA)
+			,ISNULL(RC.NOM_CATEGORIA,'''+'--'+''')
+			,ISNULL(RC.ABREV,SUBSTRING(RC.NOM_CATEGORIA,1,4))
+			,ISNULL(RC.COD_CAT_SAP,100)
+			,773301204 
+			FROM [10.95.7.201].['+@bd+'].[dbo].[RH_CATEGORIA] RC 
+			LEFT JOIN [10.95.7.201].['+@bd+'].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH 
+			ON(RC.COD_CATEGORIA=RH.COD_CATEGORIA) 
+			inner JOIN [10.95.7.201].['+@bd+'].[dbo].[TC_EMPRESA]  TC
+		    ON(TC.RUT_EMPRESA=RH.RUT_EMPRESA) 
+			WHERE RH.RUT_EMPRESA IS NOT NULL AND 
+			NOT EXISTS(SELECT *
+			FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria] CA
+			WHERE CA.RUT_EMPRESA=RH.RUT_EMPRESA AND CA.COD_CATEGORIA=RH.COD_CATEGORIA)
+			ORDER BY RC.COD_CATEGORIA';
+		end
+		else
+		begin
+		set @sqlCommand = ' INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria]
+			(	
+			[COD_CATEGORIA]
+			,[NOM_CATEGORIA]
+			,[ABREV]
+			,[COD_CAT_SAP]
+			,[RUT_EMPRESA]
+			) SELECT DISTINCT(RC.COD_CATEGORIA)
+			,ISNULL(RC.NOM_CATEGORIA,'''+'--'+''')
+			,ISNULL(RC.ABREV,SUBSTRING(RC.NOM_CATEGORIA,1,4))
+			,ISNULL(RC.COD_CAT_SAP,100)
+			,TC.RUT_EMPRESA
+			FROM [10.95.7.201].['+@bd+'].[dbo].[RH_CATEGORIA] RC 
+			LEFT JOIN [10.95.7.201].['+@bd+'].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH 
+			ON(RC.COD_CATEGORIA=RH.COD_CATEGORIA) 
+			inner JOIN [10.95.7.201].['+@bd+'].[dbo].[TC_EMPRESA]  TC
+		    ON(TC.RUT_EMPRESA=RH.RUT_EMPRESA) 
+			WHERE RH.RUT_EMPRESA IS NOT NULL AND 
+			NOT EXISTS(SELECT *
+			FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria] CA
+			WHERE CA.RUT_EMPRESA=RH.RUT_EMPRESA AND CA.COD_CATEGORIA=RH.COD_CATEGORIA)
+			ORDER BY RC.COD_CATEGORIA';
+		end
+
+			
+	END
+	ELSE
+	BEGIN
+		if @bd='Dessau'
+		begin
+		set @sqlCommand = ' INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria]
+			(	
+			[COD_CATEGORIA]
+			,[NOM_CATEGORIA]
+			,[ABREV]
+			,[COD_CAT_SAP]
+			,[RUT_EMPRESA]
+			) SELECT DISTINCT(RC.COD_CATEGORIA)
+			,ISNULL(RC.NOM_CATEGORIA,'''+'--'+''')
+			,ISNULL(RC.ABREV,SUBSTRING(RC.NOM_CATEGORIA,1,4))
+			,'''+'--'+'''
+			,773301204
+			FROM [10.95.7.201].['+@bd+'].[dbo].[RH_CATEGORIA] RC 
+			LEFT JOIN [10.95.7.201].['+@bd+'].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH 
+			ON(RC.COD_CATEGORIA=RH.COD_CATEGORIA) 
+			inner JOIN [10.95.7.201].['+@bd+'].[dbo].[TC_EMPRESA]  TC
+		    ON(TC.RUT_EMPRESA=RH.RUT_EMPRESA) 
+			WHERE RH.RUT_EMPRESA IS NOT NULL AND 
+			NOT EXISTS(SELECT *
+			FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria] CA
+			WHERE CA.RUT_EMPRESA=RH.RUT_EMPRESA AND CA.COD_CATEGORIA=RH.COD_CATEGORIA)
+			ORDER BY RC.COD_CATEGORIA';
+		end
+		else
+		begin
+		set @sqlCommand = ' INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria]
+			(	
+			[COD_CATEGORIA]
+			,[NOM_CATEGORIA]
+			,[ABREV]
+			,[COD_CAT_SAP]
+			,[RUT_EMPRESA]
+			) SELECT DISTINCT(RC.COD_CATEGORIA)
+			,ISNULL(RC.NOM_CATEGORIA,'''+'--'+''')
+			,ISNULL(RC.ABREV,SUBSTRING(RC.NOM_CATEGORIA,1,4))
+			,'''+'--'+'''
+			,RH.RUT_EMPRESA
+			FROM [10.95.7.201].['+@bd+'].[dbo].[RH_CATEGORIA] RC 
+			LEFT JOIN [10.95.7.201].['+@bd+'].[dbo].[RRHH_HISTORICO_TRABAJADOR] RH 
+			ON(RC.COD_CATEGORIA=RH.COD_CATEGORIA) 
+			inner JOIN [10.95.7.201].['+@bd+'].[dbo].[TC_EMPRESA]  TC
+		    ON(TC.RUT_EMPRESA=RH.RUT_EMPRESA) 
+			WHERE RH.RUT_EMPRESA IS NOT NULL AND 
+			NOT EXISTS(SELECT *
+			FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria] CA
+			WHERE CA.RUT_EMPRESA=RH.RUT_EMPRESA AND CA.COD_CATEGORIA=RH.COD_CATEGORIA)
+			ORDER BY RC.COD_CATEGORIA';
+			end
+	
+		END
+   EXECUTE sp_executesql @sqlCommand;
+   END;
+
+
+
+--***********************************************TRABAJADOR***********************************************
+CREATE PROCEDURE dbo.SFSF_SP_INSERT_TRABAJADOR @bd nvarchar(200)
+   AS
+   DECLARE @sqlCommand nvarchar(4000)
+   BEGIN
+  set @sqlCommand = 'INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador]
+	(	[RUT]
+	  ,[PATERNO]
+      ,[MATERNO]
+      ,[NOMBRES]
+	) SELECT 
+	DISTINCT(RT.RUT)
+	,ISNULL(RT.PATERNO,'''+'N/A'+''')
+	,ISNULL(RT.MATERNO,'''+'N/A'+''')
+	,ISNULL(RT.NOMBRES,'''+'N/A'+''')
+   FROM [10.95.7.201].['+@bd+'].[dbo].[RH_TRABAJADOR] RT 
+   WHERE NOT EXISTS (SELECT RM.RUT,RM.PATERNO,RM.MATERNO,RT.NOMBRES 
+   FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador] RM WHERE RM.RUT=RT.RUT) 
+   ORDER BY RT.RUT ASC';
+     EXECUTE sp_executesql @sqlCommand;
+   END;
+--*******************************************HIST_TRABAJADOR********************************
+
+   CREATE PROCEDURE dbo.SFSF_SP_INSERT_HIST_TRABAJA @bd nvarchar(200)
+    AS
+   DECLARE @sqlCommand nvarchar(4000)
+   BEGIN
+   IF @bd='centralizacion'
+   BEGIN
+   set @sqlCommand = N'INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Historico_Trabajador]'
+	+' ([RUT_EMPRESA] ,[RUT] ,[COD_OBRA] ,[ROL] ,[FECHA_CONTRATO] ,[COD_ESPECIALIDAD] ,[COD_CATEGORIA] ,[FECHA_FINIQUITO]'
+	+')SELECT EM.RUT_EMPRESA,HT.RUT,OB.COD_OBRA,HT.ROL,HT.FECHA_CONTRATO,HT.COD_ESPECIALIDAD,CA.COD_CATEGORIA,HT.FECHA_FINIQUITO'
+	+' FROM [10.95.7.201].['+@bd+'].[dbo].[RRHH_HISTORICO_TRABAJADOR_OLD] HT'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa] EM'
+    +' ON(HT.RUT_EMPRESA=EM.RUT_EMPRESA)'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra] OB'
+    +' ON(HT.RUT_EMPRESA=OB.RUT_EMPRESA AND HT.COD_OBRA=OB.COD_OBRA)'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria] CA'
+    +' ON(HT.RUT_EMPRESA=CA.RUT_EMPRESA AND HT.COD_CATEGORIA=CA.COD_CATEGORIA)'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad] ES'
+    +' ON(HT.RUT_EMPRESA=ES.RUT_EMPRESA AND HT.COD_ESPECIALIDAD=ES.COD_ESPECIALIDAD)'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador] TR'
+    +' ON(HT.RUT=TR.RUT) WHERE HT.FECHA_FINIQUITO IS NOT NULL AND NOT EXISTS (SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Historico_Trabajador] HH'
+    +' WHERE HH.RUT_EMPRESA =HT.RUT_EMPRESA AND HH.RUT=HT.RUT AND HH.ROL=HT.ROL'
+    +' AND HH.FECHA_CONTRATO=HT.FECHA_CONTRATO AND HH.COD_OBRA=HT.COD_OBRA'
+    +' AND HH.COD_ESPECIALIDAD=HT.COD_ESPECIALIDAD AND HH.COD_CATEGORIA=HT.COD_CATEGORIA) ';
+   END
+   ELSE IF @bd='Dessau'
+   BEGIN
+      set @sqlCommand = N'INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Historico_Trabajador]'
+	+' ([RUT_EMPRESA] ,[RUT] ,[COD_OBRA] ,[ROL] ,[FECHA_CONTRATO] ,[COD_ESPECIALIDAD] ,[COD_CATEGORIA] ,[FECHA_FINIQUITO]'
+	+')SELECT EM.RUT_EMPRESA,HT.RUT,OB.COD_OBRA,HT.ROL,HT.FECHA_CONTRATO,HT.COD_ESPECIALIDAD,CA.COD_CATEGORIA,HT.FECHA_FINIQUITO'
+	+' FROM [10.95.7.201].['+@bd+'].[dbo].[RRHH_HISTORICO_TRABAJADOR_OLD] HT'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa] EM'
+    +' ON(HT.RUT_EMPRESA=EM.RUT_EMPRESA)'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra] OB'
+    +' ON(HT.RUT_EMPRESA=OB.RUT_EMPRESA AND HT.COD_OBRA=OB.COD_OBRA)'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria] CA'
+    +' ON(HT.RUT_EMPRESA=CA.RUT_EMPRESA AND HT.COD_CATEGORIA=CA.COD_CATEGORIA)'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad] ES'
+    +' ON(HT.RUT_EMPRESA=ES.RUT_EMPRESA AND HT.COD_ESPECIALIDAD=ES.COD_ESPECIALIDAD)'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador] TR'
+    +' ON(HT.RUT=TR.RUT) WHERE HT.FECHA_FINIQUITO IS NOT NULL AND NOT EXISTS (SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Historico_Trabajador] HH'
+    +' WHERE HH.RUT_EMPRESA =HT.RUT_EMPRESA AND HH.RUT=HT.RUT AND HH.ROL=HT.ROL'
+    +' AND HH.FECHA_CONTRATO=HT.FECHA_CONTRATO AND HH.COD_OBRA=HT.COD_OBRA'
+    +' AND HH.COD_ESPECIALIDAD=HT.COD_ESPECIALIDAD AND HH.COD_CATEGORIA=HT.COD_CATEGORIA) ';
+   END
+   ELSE
+   BEGIN
+      set @sqlCommand = N'INSERT INTO [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Historico_Trabajador]'
+	+' ([RUT_EMPRESA] ,[RUT] ,[COD_OBRA] ,[ROL] ,[FECHA_CONTRATO] ,[COD_ESPECIALIDAD] ,[COD_CATEGORIA] ,[FECHA_FINIQUITO]'
+	+')SELECT EM.RUT_EMPRESA,HT.RUT,OB.COD_OBRA,HT.ROL,HT.FECHA_CONTRATO,HT.COD_ESPECIALIDAD,CA.COD_CATEGORIA,HT.FECHA_FINIQUITO'
+	+' FROM [10.95.7.201].['+@bd+'].[dbo].[RRHH_HISTORICO_TRABAJADOR] HT'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa] EM'
+    +' ON(HT.RUT_EMPRESA=EM.RUT_EMPRESA)'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra] OB'
+    +' ON(HT.RUT_EMPRESA=OB.RUT_EMPRESA AND HT.COD_OBRA=OB.COD_OBRA)'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria] CA'
+    +' ON(HT.RUT_EMPRESA=CA.RUT_EMPRESA AND HT.COD_CATEGORIA=CA.COD_CATEGORIA)'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad] ES'
+    +' ON(HT.RUT_EMPRESA=ES.RUT_EMPRESA AND HT.COD_ESPECIALIDAD=ES.COD_ESPECIALIDAD)'
+    +' INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador] TR'
+    +' ON(HT.RUT=TR.RUT) WHERE HT.FECHA_FINIQUITO IS NOT NULL AND NOT EXISTS (SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Historico_Trabajador] HH'
+    +' WHERE HH.RUT_EMPRESA =HT.RUT_EMPRESA AND HH.RUT=HT.RUT AND HH.ROL=HT.ROL'
+    +' AND HH.FECHA_CONTRATO=HT.FECHA_CONTRATO AND HH.COD_OBRA=HT.COD_OBRA'
+    +' AND HH.COD_ESPECIALIDAD=HT.COD_ESPECIALIDAD AND HH.COD_CATEGORIA=HT.COD_CATEGORIA) ';
+   END
+   EXECUTE sp_executesql @sqlCommand;
+   END;
+--*****************************select hsitorico trabajador por su rut************************
+CREATE PROCEDURE dbo.SFSF_SELECT_TRABAJ_POR_RUT  @rut varchar(60)
+   AS
+	begin
+   SELECT EM.RUT_EMPRESA,EM.NOM_EMPRESA,EM.COD_SOCIEDAD_SAP,TR.RUT,TR.NOMBRES,TR.PATERNO,TR.MATERNO,OB.COD_OBRA,OB.NOM_OBRA
+  ,HT.ROL,HT.FECHA_CONTRATO,ES.COD_ESPECIALIDAD,ES.NOM_ESPECIALIDAD,ES.COD_ESP_SAP
+   ,CA.COD_CATEGORIA,CA.NOM_CATEGORIA,CA.COD_CAT_SAP,CA.ABREV,HT.FECHA_FINIQUITO
+   FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Historico_Trabajador] HT
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Empresa] EM
+   ON(HT.RUT_EMPRESA=EM.RUT_EMPRESA)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Obra] OB
+   ON(HT.RUT_EMPRESA=OB.RUT_EMPRESA AND HT.COD_OBRA=OB.COD_OBRA)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Categoria] CA
+   ON(HT.RUT_EMPRESA=CA.RUT_EMPRESA AND HT.COD_CATEGORIA=CA.COD_CATEGORIA)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Especialidad] ES
+   ON(HT.RUT_EMPRESA=ES.RUT_EMPRESA AND HT.COD_ESPECIALIDAD=ES.COD_ESPECIALIDAD)
+   INNER JOIN [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador] TR
+   ON(HT.RUT=TR.RUT) WHERE TR.RUT=(SELECT TOP 1 RUT FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador] WHERE RUT LIKE '%'+@rut +'%')
+ORDER BY HT.FECHA_CONTRATO DESC;
+end;
+--***************************SELECT FILTRAR TRABAJADOR*************************************************************
+CREATE PROCEDURE dbo.SFSF_SELECT_FILTRA_TRABJAD  @nom varchar(60),@pat varchar(60),@mat varchar(60)
+AS
+BEGIN
+	SELECT * FROM [(localdb)\MyInstance].[BD_SFSF].[dbo].[SFSF_Trabajador]
+			WHERE PATERNO LIKE @pat+'%%%%' AND MATERNO LIKE @mat+'%%%%' AND NOMBRES LIKE @nom+'%%%%' 
+			ORDER BY NOMBRES,PATERNO,MATERNO;
+END
