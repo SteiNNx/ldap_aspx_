@@ -68,40 +68,57 @@ namespace DataAccess
                 {
                     #region datos
                     CL_Historico_Trabajador aux_hist = new CL_Historico_Trabajador();
-                    aux_hist.Rol = Convert.ToInt32(dr["ROL"].ToString());
-                    aux_hist.Fecha_contrato = Convert.ToDateTime(dr["FECHA_CONTRATO"].ToString()).ToString("dd-MM-yyyy");
-                    aux_hist.Fecha_finiquito = Convert.ToDateTime(dr["FECHA_FINIQUITO"].ToString()).ToString("dd-MM-yyyy");
-                    CL_Trabajador aux_tra = new CL_Trabajador();
-                    int rutNum = Convert.ToInt32(dr["RUT"].ToString());
-                    string rutComple = rutCompleto(rutNum);
-                    aux_tra.Rut = rutComple;
-                    aux_tra.Nombres = Convert.ToString(dr["NOMBRES"].ToString());
-                    aux_tra.Paterno = Convert.ToString(dr["PATERNO"].ToString());
-                    aux_tra.Materno = Convert.ToString(dr["MATERNO"].ToString());
-                    aux_hist.Trabajador = aux_tra;
-                    CL_Empresa aux_empre = new CL_Empresa();
-                    aux_empre.Rut_empresa = Convert.ToString(dr["RUT_EMPRESA"].ToString());
-                    aux_empre.Nom_empresa = Convert.ToString(dr["NOM_EMPRESA"].ToString());
-                    aux_empre.Cod_sociedad_sap = Convert.ToString(dr["COD_SOCIEDAD_SAP"].ToString());
-                    aux_hist.Empresa = aux_empre;
-                    CL_Obra aux_obra = new CL_Obra();
-                    aux_obra.Empresa = aux_empre;
-                    aux_obra.Cod_obra = Convert.ToInt32(dr["COD_OBRA"].ToString());
-                    aux_obra.Nom_obra = Convert.ToString(dr["NOM_OBRA"].ToString());
-                    aux_hist.Obra = aux_obra;
-                    CL_Categoria aux_cat = new CL_Categoria();
-                    aux_cat.Empresa = aux_empre;
-                    aux_cat.Cod_categoria = Convert.ToInt32(dr["COD_CATEGORIA"].ToString());
-                    aux_cat.Nom_categoria = Convert.ToString(dr["NOM_CATEGORIA"].ToString());
-                    aux_cat.Cod_categoria_sap = Convert.ToString(dr["COD_CAT_SAP"].ToString());
-                    aux_cat.Abrev_categoria = Convert.ToString(dr["ABREV"].ToString());
-                    aux_hist.Categoria = aux_cat;
-                    CL_Especialidad aux_esp = new CL_Especialidad();
-                    aux_esp.Empresa = aux_empre;
-                    aux_esp.Cod_especialidad = Convert.ToInt32(dr["COD_ESPECIALIDAD"].ToString());
-                    aux_esp.Nom_especialidad = Convert.ToString(dr["NOM_ESPECIALIDAD"].ToString());
-                    aux_esp.Cod_especialidad_sap = Convert.ToString(dr["COD_ESP_SAP"].ToString());
-                    aux_hist.Especialidad = aux_esp;
+                    if (dr["ROL"].ToString() != "")
+                    {
+                        aux_hist.Rol = Convert.ToInt32(dr["ROL"].ToString());
+                        aux_hist.Fecha_contrato = Convert.ToDateTime(dr["FECHA_CONTRATO"].ToString()).ToString("dd-MM-yyyy");
+                        aux_hist.Fecha_finiquito = Convert.ToDateTime(dr["FECHA_FINIQUITO"].ToString()).ToString("dd-MM-yyyy");
+                        CL_Trabajador aux_tra = new CL_Trabajador();
+                        int rutNum = Convert.ToInt32(dr["RUT"].ToString());
+                        string rutComple = rutCompleto(rutNum);
+                        aux_tra.Rut = rutComple;
+                        aux_tra.Nombres = Convert.ToString(dr["NOMBRES"].ToString());
+                        aux_tra.Paterno = Convert.ToString(dr["PATERNO"].ToString());
+                        aux_tra.Materno = Convert.ToString(dr["MATERNO"].ToString());
+                        aux_hist.Trabajador = aux_tra;
+                        CL_Empresa aux_empre = new CL_Empresa();
+                        aux_empre.Rut_empresa = Convert.ToString(dr["RUT_EMPRESA"].ToString());
+                        aux_empre.Nom_empresa = Convert.ToString(dr["NOM_EMPRESA"].ToString());
+                        aux_empre.Cod_sociedad_sap = Convert.ToString(dr["COD_SOCIEDAD_SAP"].ToString());
+                        aux_hist.Empresa = aux_empre;
+                        CL_Obra aux_obra = new CL_Obra();
+                        aux_obra.Empresa = aux_empre;
+                        aux_obra.Cod_obra = Convert.ToInt32(dr["COD_OBRA"].ToString());
+                        aux_obra.Nom_obra = Convert.ToString(dr["NOM_OBRA"].ToString());
+                        aux_hist.Obra = aux_obra;
+                        CL_Categoria aux_cat = new CL_Categoria();
+                        aux_cat.Empresa = aux_empre;
+                        aux_cat.Cod_categoria = Convert.ToInt32(dr["COD_CATEGORIA"].ToString());
+                        aux_cat.Nom_categoria = Convert.ToString(dr["NOM_CATEGORIA"].ToString());
+                        aux_cat.Cod_categoria_sap = Convert.ToString(dr["COD_CAT_SAP"].ToString());
+                        aux_cat.Abrev_categoria = Convert.ToString(dr["ABREV"].ToString());
+                        aux_hist.Categoria = aux_cat;
+                        CL_Especialidad aux_esp = new CL_Especialidad();
+                        aux_esp.Empresa = aux_empre;
+                        aux_esp.Cod_especialidad = Convert.ToInt32(dr["COD_ESPECIALIDAD"].ToString());
+                        aux_esp.Nom_especialidad = Convert.ToString(dr["NOM_ESPECIALIDAD"].ToString());
+                        aux_esp.Cod_especialidad_sap = Convert.ToString(dr["COD_ESP_SAP"].ToString());
+                        aux_hist.Especialidad = aux_esp;
+                    }
+                    else
+                    {
+                        CL_Trabajador aux_tra = new CL_Trabajador();
+                        int rutNum = Convert.ToInt32(dr["RUT"].ToString());
+                        string rutComple = rutCompleto(rutNum);
+                        aux_tra.Rut = rutComple;
+                        aux_tra.Nombres = Convert.ToString(dr["NOMBRES"].ToString());
+                        aux_tra.Paterno = Convert.ToString(dr["PATERNO"].ToString());
+                        aux_tra.Materno = Convert.ToString(dr["MATERNO"].ToString());
+                        aux_hist.Trabajador = aux_tra;
+                        CL_Empresa aux_empre = null;
+                        aux_hist.Empresa = aux_empre;
+                    }
+
                     lista.Add(aux_hist);
                     #endregion
                 }
@@ -110,7 +127,8 @@ namespace DataAccess
             {
                 throw new Exception("error dao hist_tra" + ex.Message);
             }
-            finally{
+            finally
+            {
                 cone.Close();
             }
             return lista;

@@ -67,15 +67,6 @@ namespace ICSK {
         protected global::System.Web.UI.WebControls.Button btn_buscar_trabajador;
         
         /// <summary>
-        /// Control lblMensaje.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblMensaje;
-        
-        /// <summary>
         /// Control btn_filtrar.
         /// </summary>
         /// <remarks>
@@ -157,15 +148,6 @@ namespace ICSK {
         protected global::System.Web.UI.WebControls.Label lblMensajeFiltrar;
         
         /// <summary>
-        /// Control Button1.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button1;
-        
-        /// <summary>
         /// Control historico.
         /// </summary>
         /// <remarks>
@@ -211,6 +193,15 @@ namespace ICSK {
         protected global::System.Web.UI.WebControls.GridView gv_trabajadores_filtrar;
         
         /// <summary>
+        /// Control lblMensaje.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMensaje;
+        
+        /// <summary>
         /// Control txt_nombre_completo_popup.
         /// </summary>
         /// <remarks>
@@ -245,6 +236,15 @@ namespace ICSK {
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btn_fl_pop;
+        
+        /// <summary>
+        /// Control Button2.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button Button2;
         
         /// <summary>
         /// Control lblMensajePopup.

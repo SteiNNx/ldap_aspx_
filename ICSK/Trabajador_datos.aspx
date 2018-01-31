@@ -73,18 +73,19 @@
                                         runat="server" ErrorMessage="Ingrese solo numeros">
                                     </asp:RegularExpressionValidator>
                                 </div>
-                                <div class="form-group2 col-lg-2">
+                                <div class="form-group2 col-lg-2" style="text-align: center;">
                                     <label>Busqueda</label>
-                                    <div class="form-group2">
-                                        <asp:Button class="btn btn-success" ID="btn_buscar_trabajador"
-                                            runat="server" Text="Buscar" OnClick="btn_buscar_trabajador_Click" />
-                                        <br />
-                                        <asp:Label ID="lblMensaje" runat="server" Text=""></asp:Label>
-                                    </div>
-                                    <div class="form-group2">
-                                        <asp:Button ID="btn_filtrar" class="btn btn-success" data-target="#myModal" data-toggle="modal"
-                                            runat="server" Text="Filtrar" OnClick="btn_filtrar_Click1" />
-                                        <br />
+                                    <div style="display: flex;">
+                                        <div class="form-group2" style="padding-left: 5px">
+                                            <asp:Button class="btn btn-success" ID="btn_buscar_trabajador"
+                                                runat="server" Text="Buscar" OnClick="btn_buscar_trabajador_Click" />
+                                            <br />
+                                        </div>
+                                        <div class="form-group2">
+                                            <asp:Button ID="btn_filtrar" class="btn btn-success" data-target="#myModal" data-toggle="modal"
+                                                runat="server" Text="Filtrar" OnClick="btn_filtrar_Click1" />
+                                            <br />
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="dv_rut" runat="server" class="form-group2 col-lg-2">
@@ -102,11 +103,8 @@
                                 <div id="dv_filtrar_mensaje" runat="server" class="form-group2 col-lg-12">
                                     <h2>
                                         <asp:Label ID="lblMensajeFiltrar" runat="server" CssClass=""></asp:Label>
-
                                     </h2>
-                                    <asp:Button ID="Button1" runat="server" Text="Button" Visible="false" OnClick="Button1_Click" />
                                 </div>
-
                                 <div runat="server" id="historico" class="col-lg-12">
                                     <div class="form-group2">
                                         <div class="form-group2" style="overflow-x: auto;">
@@ -119,26 +117,31 @@
                                 <div runat="server" id="filtrarTrabajadores" class="col-lg-12">
                                     <div class="form-group2">
                                         <div class="form-group2" style="overflow-x: auto;">
-                                            <asp:TextBox ID="txt_search" runat="server" onkeyup="Search_Gridview(this, 'gv_trabajadores_filtrar')"></asp:TextBox>
-                                            <asp:GridView ID="gv_trabajadores_filtrar" AutoPostBack="true" runat="server" CssClass="table table-striped table-bordered table-hover">
+                                            <asp:TextBox CssClass="form-control" ID="txt_search" runat="server" onkeyup="Search_Gridview(this, 'gv_trabajadores_filtrar')"></asp:TextBox>
+                                            <asp:GridView ID="gv_trabajadores_filtrar" AutoPostBack="true" runat="server" CssClass="table table-striped table-bordered table-hover" OnRowCommand="gv_trabajadores_filtrar_RowCommand">
+                                                <Columns>
+                                                    <asp:ButtonField
+                                                        CommandName="Select"
+                                                        HeaderText="Historico" Text="Seleccionar" />
+                                                </Columns>
                                             </asp:GridView>
                                         </div>
                                     </div>
                                 </div>
-                                -
-                        <!-- FIN Filtrar Trabajadores-->
+                                <!-- FIN Filtrar Trabajadores-->
+                            </div>
+                            <div class="panel-footer">
+                                <asp:Label ID="lblMensaje" runat="server" Text=""></asp:Label>
                             </div>
                         </div>
                     </div>
-
+                    <!--POPUP-->
                     <div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span></button>
-                                    <h4 class="modal-title" id="myModalLabel">Ingrese Datos</h4>
+                                    <h4 class="modal-title" id="myModalLabel">Ingrese Datos Busqueda</h4>
                                 </div>
                                 <div class="modal-body">
                                     <asp:TextBox ID="txt_nombre_completo_popup" runat="server" placeholder="Nombre Completo" class="form-control"></asp:TextBox><br />
@@ -147,7 +150,8 @@
 
                                 </div>
                                 <div class="modal-footer">
-                                    <asp:Button ID="btn_fl_pop" runat="server" Text="Button" OnClick="btn_fl_pop_Click" UseSubmitBehavior="false" />
+                                    <asp:Button ID="btn_fl_pop" runat="server" Text="Filtrar" OnClick="btn_fl_pop_Click" UseSubmitBehavior="false" />
+                                    <asp:Button ID="Button2" runat="server" Text="Cerrar" UseSubmitBehavior="false" OnClick="Button2_Click" />
                                     <!--<input id="btnok" type="button" value="Filtrar" class="btn btn-default" data-dismiss="modal" />-->
                                     <asp:Label runat="server" ID="lblMensajePopup"></asp:Label>
                                 </div>
